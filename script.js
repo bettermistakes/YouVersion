@@ -1,114 +1,3 @@
-// ------------------ Hover bg buttons ------------------ //
-
-document.querySelectorAll("[animation=hover-bg]").forEach((element) => {
-  const hoverBg = element.querySelector(".hover--bg");
-
-  element.addEventListener("mouseenter", (event) => {
-    const { top, bottom } = element.getBoundingClientRect();
-    const mousePosition = event.clientY;
-
-    if (mousePosition < (top + bottom) / 2) {
-      // Mouse enters from the top
-      hoverBg.style.top = "0";
-      hoverBg.style.height = "0";
-      requestAnimationFrame(() => {
-        hoverBg.style.transition = "height 0.3s ease, top 0.3s ease";
-        hoverBg.style.height = "100%";
-      });
-    } else {
-      // Mouse enters from the bottom
-      hoverBg.style.top = "auto";
-      hoverBg.style.bottom = "0";
-      hoverBg.style.height = "0";
-      requestAnimationFrame(() => {
-        hoverBg.style.transition = "height 0.3s ease, bottom 0.3s ease";
-        hoverBg.style.height = "100%";
-      });
-    }
-  });
-
-  element.addEventListener("mouseleave", (event) => {
-    const { top, bottom } = element.getBoundingClientRect();
-    const mousePosition = event.clientY;
-
-    if (mousePosition < (top + bottom) / 2) {
-      // Mouse leaves from the top
-      hoverBg.style.top = "0";
-      hoverBg.style.transition = "height 0.3s ease, top 0.3s ease";
-      hoverBg.style.height = "0";
-    } else {
-      // Mouse leaves from the bottom
-      hoverBg.style.top = "auto";
-      hoverBg.style.bottom = "0";
-      hoverBg.style.transition = "height 0.3s ease, bottom 0.3s ease";
-      hoverBg.style.height = "0";
-    }
-  });
-});
-
-// --------------------- navbar scroll background --------------------- //
-
-$(document).ready(function () {
-  var scrollTop = 0;
-  $(window).scroll(function () {
-    scrollTop = $(window).scrollTop();
-    if (scrollTop >= 50) {
-      $(".navbar").addClass("is--scrolled");
-    } else if (scrollTop < 50) {
-      $(".navbar").removeClass("is--scrolled");
-    }
-  });
-});
-
-// --------------------- hover text buttons --------------------- //
-
-function initButtonCharacterStagger() {
-  const offsetIncrement = 0.01; // Transition offset increment in seconds
-  const buttons = document.querySelectorAll("[data-button-animate-chars]");
-
-  buttons.forEach((button) => {
-    const text = button.textContent; // Get the button's text content
-    button.innerHTML = ""; // Clear the original content
-
-    [...text].forEach((char, index) => {
-      const span = document.createElement("span");
-      span.textContent = char;
-      span.style.transitionDelay = `${index * offsetIncrement}s`;
-
-      // Handle spaces explicitly
-      if (char === " ") {
-        span.style.whiteSpace = "pre"; // Preserve space width
-      }
-
-      button.appendChild(span);
-    });
-  });
-}
-
-// Initialize Button Character Stagger Animation
-document.addEventListener("DOMContentLoaded", () => {
-  initButtonCharacterStagger();
-});
-
-// --------------------- navbar scroll down --------------------- //
-
-let lastScrollY = window.scrollY;
-const navbar = document.querySelector(".navbar");
-
-window.addEventListener("scroll", () => {
-  const currentScrollY = window.scrollY;
-
-  if (currentScrollY > lastScrollY && currentScrollY > 200) {
-    // Scrolling down and past 200px
-    navbar.classList.add("hidden");
-  } else {
-    // Scrolling up
-    navbar.classList.remove("hidden");
-  }
-
-  lastScrollY = currentScrollY;
-});
-
 // ---------------- navbar dropdown ---------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -289,6 +178,98 @@ document.addEventListener("DOMContentLoaded", () => {
         isOpen = false;
         gsap.set(menu, { display: "none" });
       });
+    }
+  });
+});
+
+// --------------------- navbar scroll background --------------------- //
+
+$(document).ready(function () {
+  var scrollTop = 0;
+  $(window).scroll(function () {
+    scrollTop = $(window).scrollTop();
+    if (scrollTop >= 50) {
+      $(".navbar").addClass("is--scrolled");
+    } else if (scrollTop < 50) {
+      $(".navbar").removeClass("is--scrolled");
+    }
+  });
+});
+
+// --------------------- hover text buttons --------------------- //
+
+function initButtonCharacterStagger() {
+  const offsetIncrement = 0.01; // Transition offset increment in seconds
+  const buttons = document.querySelectorAll("[data-button-animate-chars]");
+
+  buttons.forEach((button) => {
+    const text = button.textContent; // Get the button's text content
+    button.innerHTML = ""; // Clear the original content
+
+    [...text].forEach((char, index) => {
+      const span = document.createElement("span");
+      span.textContent = char;
+      span.style.transitionDelay = `${index * offsetIncrement}s`;
+
+      // Handle spaces explicitly
+      if (char === " ") {
+        span.style.whiteSpace = "pre"; // Preserve space width
+      }
+
+      button.appendChild(span);
+    });
+  });
+}
+
+// Initialize Button Character Stagger Animation
+document.addEventListener("DOMContentLoaded", () => {
+  initButtonCharacterStagger();
+});
+
+// ------------------ Hover bg buttons ------------------ //
+
+document.querySelectorAll("[animation=hover-bg]").forEach((element) => {
+  const hoverBg = element.querySelector(".hover--bg");
+
+  element.addEventListener("mouseenter", (event) => {
+    const { top, bottom } = element.getBoundingClientRect();
+    const mousePosition = event.clientY;
+
+    if (mousePosition < (top + bottom) / 2) {
+      // Mouse enters from the top
+      hoverBg.style.top = "0";
+      hoverBg.style.height = "0";
+      requestAnimationFrame(() => {
+        hoverBg.style.transition = "height 0.3s ease, top 0.3s ease";
+        hoverBg.style.height = "100%";
+      });
+    } else {
+      // Mouse enters from the bottom
+      hoverBg.style.top = "auto";
+      hoverBg.style.bottom = "0";
+      hoverBg.style.height = "0";
+      requestAnimationFrame(() => {
+        hoverBg.style.transition = "height 0.3s ease, bottom 0.3s ease";
+        hoverBg.style.height = "100%";
+      });
+    }
+  });
+
+  element.addEventListener("mouseleave", (event) => {
+    const { top, bottom } = element.getBoundingClientRect();
+    const mousePosition = event.clientY;
+
+    if (mousePosition < (top + bottom) / 2) {
+      // Mouse leaves from the top
+      hoverBg.style.top = "0";
+      hoverBg.style.transition = "height 0.3s ease, top 0.3s ease";
+      hoverBg.style.height = "0";
+    } else {
+      // Mouse leaves from the bottom
+      hoverBg.style.top = "auto";
+      hoverBg.style.bottom = "0";
+      hoverBg.style.transition = "height 0.3s ease, bottom 0.3s ease";
+      hoverBg.style.height = "0";
     }
   });
 });
