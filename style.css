@@ -1,10 +1,5 @@
 .navbar {
-  transition: all 0.3s ease;
   border-bottom: solid 1px transparent;
-}
-
-.navbar.hidden {
-  transform: translateY(-100%);
 }
 
 .navbar.is--scrolled {
