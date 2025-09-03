@@ -46,7 +46,40 @@ document.querySelectorAll("[animation=hover-bg]").forEach((element) => {
   });
 });
 
-// ---------------- navbar ---------------- //
+// --------------------- navbar scroll background --------------------- //
+
+$(document).ready(function () {
+  var scrollTop = 0;
+  $(window).scroll(function () {
+    scrollTop = $(window).scrollTop();
+    if (scrollTop >= 50) {
+      $(".navbar").addClass("is--scrolled");
+    } else if (scrollTop < 50) {
+      $(".navbar").removeClass("is--scrolled");
+    }
+  });
+});
+
+// --------------------- navbar scroll down --------------------- //
+
+let lastScrollY = window.scrollY;
+const navbar = document.querySelector(".navbar");
+
+window.addEventListener("scroll", () => {
+  const currentScrollY = window.scrollY;
+
+  if (currentScrollY > lastScrollY && currentScrollY > 200) {
+    // Scrolling down and past 200px
+    navbar.classList.add("hidden");
+  } else {
+    // Scrolling up
+    navbar.classList.remove("hidden");
+  }
+
+  lastScrollY = currentScrollY;
+});
+
+// ---------------- navbar dropdown ---------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
   const triggers = document.querySelectorAll(".navbar--dropdown-trigger");

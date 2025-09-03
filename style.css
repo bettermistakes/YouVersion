@@ -1,0 +1,14 @@
+.navbar {
+  transition: all 0.3s ease;
+  border-bottom: solid 1px transparent;
+}
+
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
+.navbar.is--scrolled {
+  background: var(--_colors---white);
+  border-bottom: solid 1px #c7c7c7;
+  color: var(--_colors---background-color--alternate);
+}
