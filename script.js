@@ -91,12 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
       ".navbar--dropdown-list-column-parent"
     );
     const imgWrapper = dropdown.querySelector(".navbar--dropdown-img-wrapper");
+    const trigger = dropdown.querySelector(".navbar--dropdown-trigger");
 
-    // Ensure height is calculated correctly
+    // Set height to auto then animate from 0
     gsap.set(list, { height: "auto" });
     const fullHeight = list.offsetHeight;
 
-    // Animate height from 0 to auto
     gsap.fromTo(
       list,
       { height: 0 },
@@ -105,12 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
         duration: 0.5,
         ease: "power4.out",
         onComplete: () => {
-          gsap.set(list, { height: "auto" }); // Reset height to auto
+          gsap.set(list, { height: "auto" });
         },
       }
     );
 
-    // Animate inner content in (opacity and y)
     gsap.fromTo(
       [...columnParents, imgWrapper],
       { opacity: 0, y: "1rem" },
@@ -124,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     );
 
+    trigger.classList.add("is--active");
     currentOpen = dropdown;
   };
 
@@ -135,8 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ".navbar--dropdown-list-column-parent"
     );
     const imgWrapper = dropdown.querySelector(".navbar--dropdown-img-wrapper");
+    const trigger = dropdown.querySelector(".navbar--dropdown-trigger");
 
-    // Animate inner content out
     gsap.to([...columnParents, imgWrapper], {
       opacity: 0,
       y: "1rem",
@@ -144,13 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ease: "power4.out",
     });
 
-    // Animate height collapse
     gsap.to(list, {
       height: 0,
       duration: 0.4,
       ease: "power4.out",
     });
 
+    trigger.classList.remove("is--active");
     currentOpen = null;
   };
 
@@ -171,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Close dropdown when clicking outside
   document.addEventListener("click", (e) => {
     if (currentOpen && !currentOpen.contains(e.target)) {
       closeDropdown(currentOpen);
