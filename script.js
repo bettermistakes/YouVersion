@@ -208,6 +208,84 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// --------------------- mobile menu --------------------- //
+
+document.addEventListener("DOMContentLoaded", () => {
+  const trigger = document.querySelector(".nav--menu-trigger");
+  const triggerOpen = trigger.querySelector(".trigger--open");
+  const triggerClose = trigger.querySelector(".trigger--close");
+  const menu = document.querySelector(".navbar--menu");
+  const dropdowns = menu.querySelectorAll(
+    ".navbar--dropdown, .language--dropdown"
+  );
+
+  let isOpen = false;
+
+  // Setup GSAP timeline
+  const tl = gsap.timeline({ paused: true, reversed: true });
+
+  tl
+    // Show menu
+    .set(menu, { display: "flex" })
+    .fromTo(
+      menu,
+      { x: "100vw" },
+      { x: "0vw", duration: 0.6, ease: "power4.out" },
+      0
+    )
+
+    // Open/close icon swap
+    .fromTo(
+      triggerOpen,
+      { opacity: 1, y: 0 },
+      { opacity: 0, y: "-1rem", duration: 0.3, ease: "power4.out" },
+      0
+    )
+    .fromTo(
+      triggerClose,
+      { opacity: 0, y: "1rem" },
+      { opacity: 1, y: "0rem", duration: 0.3, ease: "power4.out" },
+      0
+    )
+
+    // Dropdowns stagger in
+    .fromTo(
+      dropdowns,
+      { opacity: 0, y: "1rem" },
+      {
+        opacity: 1,
+        y: "0rem",
+        duration: 0.6,
+        ease: "power4.out",
+        stagger: 0.05,
+      },
+      0.2
+    );
+
+  // Toggle logic
+  trigger.addEventListener("click", () => {
+    isOpen = !isOpen;
+
+    if (isOpen) {
+      tl.play();
+    } else {
+      tl.reverse().then(() => {
+        gsap.set(menu, { display: "none" }); // Hide after reverse animation
+      });
+    }
+  });
+
+  // Optional: Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (isOpen && !trigger.contains(e.target) && !menu.contains(e.target)) {
+      tl.reverse().then(() => {
+        isOpen = false;
+        gsap.set(menu, { display: "none" });
+      });
+    }
+  });
+});
+
 // ---------------- code ------------------- //
 
 document.addEventListener("DOMContentLoaded", function () {
