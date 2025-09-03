@@ -9,7 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
     new Swiper(sliderEl, {
       loop: true,
       effect: "fade",
-      fadeEffect: { crossFade: true },
+      fadeEffect: {
+        crossFade: true,
+      },
       pagination: {
         el: paginationEl,
         clickable: true,
