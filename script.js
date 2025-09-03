@@ -46,6 +46,106 @@ document.querySelectorAll("[animation=hover-bg]").forEach((element) => {
   });
 });
 
+// ---------------- navbar ---------------- //
+
+document.addEventListener("DOMContentLoaded", () => {
+  const triggers = document.querySelectorAll(".navbar--dropdown-trigger");
+  let currentOpen = null;
+
+  const openDropdown = (dropdown) => {
+    const list = dropdown.querySelector(".navbar--dropdown-list");
+    const columnParents = dropdown.querySelectorAll(
+      ".navbar--dropdown-list-column-parent"
+    );
+    const imgWrapper = dropdown.querySelector(".navbar--dropdown-img-wrapper");
+
+    // Ensure height is calculated correctly
+    gsap.set(list, { height: "auto" });
+    const fullHeight = list.offsetHeight;
+
+    // Animate height from 0 to auto
+    gsap.fromTo(
+      list,
+      { height: 0 },
+      {
+        height: fullHeight,
+        duration: 0.5,
+        ease: "power4.out",
+        onComplete: () => {
+          gsap.set(list, { height: "auto" }); // Reset height to auto
+        },
+      }
+    );
+
+    // Animate inner content in (opacity and y)
+    gsap.fromTo(
+      [...columnParents, imgWrapper],
+      { opacity: 0, y: "1rem" },
+      {
+        opacity: 1,
+        y: "0rem",
+        duration: 0.5,
+        delay: 0.15,
+        stagger: 0.05,
+        ease: "power4.out",
+      }
+    );
+
+    currentOpen = dropdown;
+  };
+
+  const closeDropdown = (dropdown) => {
+    if (!dropdown) return;
+
+    const list = dropdown.querySelector(".navbar--dropdown-list");
+    const columnParents = dropdown.querySelectorAll(
+      ".navbar--dropdown-list-column-parent"
+    );
+    const imgWrapper = dropdown.querySelector(".navbar--dropdown-img-wrapper");
+
+    // Animate inner content out
+    gsap.to([...columnParents, imgWrapper], {
+      opacity: 0,
+      y: "1rem",
+      duration: 0.35,
+      ease: "power4.out",
+    });
+
+    // Animate height collapse
+    gsap.to(list, {
+      height: 0,
+      duration: 0.4,
+      ease: "power4.out",
+    });
+
+    currentOpen = null;
+  };
+
+  triggers.forEach((trigger) => {
+    const parent = trigger.closest(".navbar--dropdown");
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      if (currentOpen && currentOpen !== parent) {
+        closeDropdown(currentOpen);
+        openDropdown(parent);
+      } else if (currentOpen === parent) {
+        closeDropdown(parent);
+      } else {
+        openDropdown(parent);
+      }
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (currentOpen && !currentOpen.contains(e.target)) {
+      closeDropdown(currentOpen);
+    }
+  });
+});
+
 // ---------------- code ------------------- //
 
 document.addEventListener("DOMContentLoaded", function () {
