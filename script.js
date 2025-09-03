@@ -211,13 +211,18 @@ document.addEventListener("DOMContentLoaded", () => {
 // --------------------- mobile menu --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
+  const mm = window.matchMedia("(max-width: 991px)");
+
+  if (!mm.matches) return; // Skip if screen is larger than 991px
+
   const trigger = document.querySelector(".nav--menu-trigger");
-  const triggerOpen = trigger.querySelector(".trigger--open");
-  const triggerClose = trigger.querySelector(".trigger--close");
+  const triggerOpen = trigger?.querySelector(".trigger--open");
+  const triggerClose = trigger?.querySelector(".trigger--close");
   const menu = document.querySelector(".navbar--menu");
-  const dropdowns = menu.querySelectorAll(
-    ".navbar--dropdown, .language--dropdown"
-  );
+  const dropdowns = menu?.querySelectorAll("[navbar=stagger]");
+
+  if (!trigger || !triggerOpen || !triggerClose || !menu || !dropdowns.length)
+    return;
 
   let isOpen = false;
 
@@ -225,8 +230,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const tl = gsap.timeline({ paused: true, reversed: true });
 
   tl
-    // Show menu
+    // Show menu container
     .set(menu, { display: "flex" })
+
+    // Slide menu in
     .fromTo(
       menu,
       { x: "100vw" },
@@ -234,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
       0
     )
 
-    // Open/close icon swap
+    // Animate trigger icons
     .fromTo(
       triggerOpen,
       { opacity: 1, y: 0 },
@@ -262,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
       0.2
     );
 
-  // Toggle logic
+  // Toggle open/close
   trigger.addEventListener("click", () => {
     isOpen = !isOpen;
 
@@ -270,12 +277,12 @@ document.addEventListener("DOMContentLoaded", () => {
       tl.play();
     } else {
       tl.reverse().then(() => {
-        gsap.set(menu, { display: "none" }); // Hide after reverse animation
+        gsap.set(menu, { display: "none" });
       });
     }
   });
 
-  // Optional: Close menu when clicking outside
+  // Optional: click outside to close
   document.addEventListener("click", (e) => {
     if (isOpen && !trigger.contains(e.target) && !menu.contains(e.target)) {
       tl.reverse().then(() => {
