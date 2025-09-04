@@ -296,3 +296,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// ---------------- Checkbox toggle functionality ---------------- //
+
+document
+  .querySelectorAll('.checkbox-field-2 input[type="checkbox"]')
+  .forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      this.closest(".checkbox-field-2").classList.toggle(
+        "is--checked",
+        this.checked
+      );
+    });
+  });
