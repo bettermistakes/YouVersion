@@ -300,12 +300,19 @@ document.addEventListener("DOMContentLoaded", function () {
 // ---------------- Checkbox toggle functionality ---------------- //
 
 document
-  .querySelectorAll('.checkbox-field-2 input[type="checkbox"]')
-  .forEach((checkbox) => {
-    checkbox.addEventListener("change", function () {
-      this.closest(".checkbox-field-2").classList.toggle(
-        "is--checked",
-        this.checked
-      );
+  .querySelectorAll('.checkbox-field-2 input[type="radio"]')
+  .forEach((radio) => {
+    radio.addEventListener("change", function () {
+      // Remove is--checked from all siblings with the same name
+      document
+        .querySelectorAll(`input[name="${this.name}"]`)
+        .forEach((input) => {
+          input.closest(".checkbox-field-2")?.classList.remove("is--checked");
+        });
+
+      // Add is--checked to the selected one
+      if (this.checked) {
+        this.closest(".checkbox-field-2")?.classList.add("is--checked");
+      }
     });
   });
