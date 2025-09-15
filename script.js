@@ -316,3 +316,107 @@ document
       }
     });
   });
+
+// ---------------- Lightbox YouTube URL Handler ---------------- //
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Function to extract YouTube video ID from URL
+  function getYouTubeVideoId(url) {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  }
+
+  // Function to create YouTube embed URL
+  function createYouTubeEmbedUrl(videoId) {
+    return `https://www.youtube.com/embed/${videoId}?feature=oembed`;
+  }
+
+  // Function to update lightbox iframe with new YouTube URL
+  function updateLightboxIframe(youtubeUrl) {
+    const videoId = getYouTubeVideoId(youtubeUrl);
+    if (!videoId) {
+      console.warn("Invalid YouTube URL:", youtubeUrl);
+      return;
+    }
+
+    const embedUrl = createYouTubeEmbedUrl(videoId);
+
+    // Wait for lightbox to be fully loaded
+    const checkForLightbox = () => {
+      const lightboxIframe = document.querySelector(".w-lightbox-embed");
+      if (lightboxIframe) {
+        lightboxIframe.src = embedUrl;
+        console.log("Updated lightbox iframe with URL:", embedUrl);
+      } else {
+        // If lightbox not found yet, try again after a short delay
+        setTimeout(checkForLightbox, 100);
+      }
+    };
+
+    checkForLightbox();
+  }
+
+  // Add click event listeners to all lightbox slides
+  document.querySelectorAll(".lightbox--slide").forEach((slide) => {
+    slide.addEventListener("click", function (e) {
+      // Find the YouTube link within this slide
+      const youtubeLinkElement = this.querySelector(".youtube--link");
+
+      if (youtubeLinkElement) {
+        const youtubeUrl = youtubeLinkElement.textContent.trim();
+
+        if (youtubeUrl) {
+          // Store the YouTube URL for when the lightbox opens
+          this.setAttribute("data-youtube-url", youtubeUrl);
+
+          // Use a small delay to ensure the lightbox has time to initialize
+          setTimeout(() => {
+            updateLightboxIframe(youtubeUrl);
+          }, 200);
+        }
+      }
+    });
+  });
+
+  // Alternative approach: Listen for Webflow lightbox events
+  // This is a more reliable method as it waits for the actual lightbox to open
+  document.addEventListener("click", function (e) {
+    const lightboxSlide = e.target.closest(".lightbox--slide");
+    if (lightboxSlide) {
+      const youtubeLinkElement = lightboxSlide.querySelector(".youtube--link");
+
+      if (youtubeLinkElement) {
+        const youtubeUrl = youtubeLinkElement.textContent.trim();
+
+        if (youtubeUrl) {
+          // Use MutationObserver to watch for lightbox appearance
+          const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+              if (mutation.type === "childList") {
+                const lightboxIframe =
+                  document.querySelector(".w-lightbox-embed");
+                if (lightboxIframe) {
+                  updateLightboxIframe(youtubeUrl);
+                  observer.disconnect(); // Stop observing once we've updated
+                }
+              }
+            });
+          });
+
+          // Start observing the document body for changes
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+          });
+
+          // Disconnect observer after 5 seconds to prevent memory leaks
+          setTimeout(() => {
+            observer.disconnect();
+          }, 5000);
+        }
+      }
+    }
+  });
+});
