@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Lightbox Demo</title>
+    <link rel="stylesheet" href="lightbox.css" />
+  </head>
+  <body>
+    <div
+      data-wf--slot-item-video-slide--variant="100vh"
+      class="swiper-slide is--video w-variant-dcb961e6-b727-8938-18d3-540dc8b2b988 swiper-slide-active"
+      role="group"
+      aria-label="1 / 4"
+      data-swiper-slide-index="0"
+      style="width: 1709px"
+    >
+      <div class="youtube--link">
+        https://www.youtube.com/watch?v=qxPuYKQjM04
+      </div>
+      <div
+        class="lightbox--slide w-variant-dcb961e6-b727-8938-18d3-540dc8b2b988"
+      >
+        <img
+          src="https://cdn.prod.website-files.com/68a2d1038ded21fa4f161139/68b80b7e8710dce0779eace0_Placeholder%20Lightbox.avif"
+          loading="lazy"
+          alt=""
+          class="lightbox--img w-variant-dcb961e6-b727-8938-18d3-540dc8b2b988"
+        />
+        <div class="arrow--wrapper">
+          <div class="div-block-24">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="100%"
+              viewBox="0 0 64 64"
+              fill="none"
+              class="icon--64"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M5.33398 31.9987C5.33398 17.2711 17.2731 5.33203 32.0007 5.33203C39.0731 5.33203 45.8559 8.14155 50.8569 13.1425C55.8578 18.1435 58.6673 24.9263 58.6673 31.9987C58.6673 46.7263 46.7283 58.6654 32.0007 58.6654C17.2731 58.6654 5.33398 46.7263 5.33398 31.9987ZM27.1208 43.4121L42.6674 33.7054C43.2492 33.3328 43.6011 32.6896 43.6011 31.9987C43.6011 31.3079 43.2492 30.6646 42.6674 30.2921L27.0674 20.5854C26.453 20.198 25.6768 20.1742 25.0398 20.5231C24.4028 20.8721 24.005 21.539 24.0008 22.2654V41.7321C23.9922 42.4761 24.3973 43.1634 25.0524 43.5161C25.7075 43.8689 26.5043 43.8288 27.1208 43.4121Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Lightbox Slide for Testing -->
+    <div
+      data-wf--slot-item-video-slide--variant="100vh"
+      class="swiper-slide is--video w-variant-dcb961e6-b727-8938-18d3-540dc8b2b988"
+      role="group"
+      aria-label="2 / 4"
+      data-swiper-slide-index="1"
+      style="width: 1709px; margin-top: 20px"
+    >
+      <div class="youtube--link">
+        https://www.youtube.com/watch?v=dQw4w9WgXcQ
+      </div>
+      <div
+        class="lightbox--slide w-variant-dcb961e6-b727-8938-18d3-540dc8b2b988"
+      >
+        <img
+          src="https://cdn.prod.website-files.com/68a2d1038ded21fa4f161139/68b80b7e8710dce0779eace0_Placeholder%20Lightbox.avif"
+          loading="lazy"
+          alt=""
+          class="lightbox--img w-variant-dcb961e6-b727-8938-18d3-540dc8b2b988"
+        />
+        <div class="arrow--wrapper">
+          <div class="div-block-24">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="100%"
+              viewBox="0 0 64 64"
+              fill="none"
+              class="icon--64"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M5.33398 31.9987C5.33398 17.2711 17.2731 5.33203 32.0007 5.33203C39.0731 5.33203 45.8559 8.14155 50.8569 13.1425C55.8578 18.1435 58.6673 24.9263 58.6673 31.9987C58.6673 46.7263 46.7283 58.6654 32.0007 58.6654C17.2731 58.6654 5.33398 46.7263 5.33398 31.9987ZM27.1208 43.4121L42.6674 33.7054C43.2492 33.3328 43.6011 32.6896 43.6011 31.9987C43.6011 31.3079 43.2492 30.6646 42.6674 30.2921L27.0674 20.5854C26.453 20.198 25.6768 20.1742 25.0398 20.5231C24.4028 20.8721 24.005 21.539 24.0008 22.2654V41.7321C23.9922 42.4761 24.3973 43.1634 25.0524 43.5161C25.7075 43.8689 26.5043 43.8288 27.1208 43.4121Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom YouTube Popup -->
+    <div id="youtube-popup" class="youtube-popup">
+      <div class="youtube-popup-backdrop"></div>
+      <button class="youtube-popup-close" aria-label="Close popup">
+        &times;
+      </button>
+      <div class="youtube-popup-container">
+        <div class="youtube-popup-content">
+          <div class="youtube-popup-video">
+            <iframe
+              id="youtube-popup-iframe"
+              src=""
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              title="YouTube video player"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="lightbox.js"></script>
+  </body>
+</html>
