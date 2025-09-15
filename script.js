@@ -320,6 +320,36 @@ document
 // ---------------- Lightbox YouTube URL Handler ---------------- //
 
 document.addEventListener("DOMContentLoaded", function () {
+  // Set up permissions policy to allow YouTube iframe features
+  function setupPermissionsPolicy() {
+    // Create a meta tag for permissions policy if it doesn't exist
+    let permissionsPolicy = document.querySelector(
+      'meta[http-equiv="Permissions-Policy"]'
+    );
+
+    if (!permissionsPolicy) {
+      permissionsPolicy = document.createElement("meta");
+      permissionsPolicy.setAttribute("http-equiv", "Permissions-Policy");
+      document.head.appendChild(permissionsPolicy);
+    }
+
+    // Set permissions policy to allow YouTube iframe features
+    const policy = [
+      "accelerometer=(self)",
+      "autoplay=(self)",
+      "clipboard-write=(self)",
+      "encrypted-media=(self)",
+      "gyroscope=(self)",
+      "picture-in-picture=(self)",
+      "web-share=(self)",
+    ].join(", ");
+
+    permissionsPolicy.setAttribute("content", policy);
+  }
+
+  // Initialize permissions policy
+  setupPermissionsPolicy();
+
   // Function to extract YouTube video ID from URL
   function getYouTubeVideoId(url) {
     const regExp =
@@ -347,7 +377,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkForLightbox = () => {
       const lightboxIframe = document.querySelector(".w-lightbox-embed");
       if (lightboxIframe) {
+        // Update the iframe source
         lightboxIframe.src = embedUrl;
+
+        // Set proper iframe attributes to handle permissions policy
+        lightboxIframe.setAttribute(
+          "allow",
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        );
+        lightboxIframe.setAttribute("allowfullscreen", "true");
+        lightboxIframe.setAttribute("frameborder", "0");
+        lightboxIframe.setAttribute("title", "YouTube video player");
+
+        // Add permissions policy to prevent violations
+        lightboxIframe.setAttribute("allowfullscreen", "true");
+
         console.log("Updated lightbox iframe with URL:", embedUrl);
       } else {
         // If lightbox not found yet, try again after a short delay
