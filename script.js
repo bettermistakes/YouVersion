@@ -75,26 +75,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   triggers.forEach((trigger) => {
     const parent = trigger.closest(".navbar--dropdown");
+    let hoverTimeout;
 
-    trigger.addEventListener("click", (e) => {
-      e.stopPropagation();
-
+    // Open dropdown on hover
+    trigger.addEventListener("mouseenter", () => {
+      clearTimeout(hoverTimeout);
       if (currentOpen && currentOpen !== parent) {
         closeDropdown(currentOpen);
-        openDropdown(parent);
-      } else if (currentOpen === parent) {
-        closeDropdown(parent);
-      } else {
-        openDropdown(parent);
       }
+      openDropdown(parent);
+    });
+
+    // Close dropdown when leaving the entire dropdown container
+    parent.addEventListener("mouseleave", () => {
+      hoverTimeout = setTimeout(() => {
+        closeDropdown(parent);
+      }, 150); // Small delay to prevent accidental closes
+    });
+
+    // Cancel close if mouse re-enters before timeout
+    parent.addEventListener("mouseenter", () => {
+      clearTimeout(hoverTimeout);
     });
   });
 
-  document.addEventListener("click", (e) => {
-    if (currentOpen && !currentOpen.contains(e.target)) {
-      closeDropdown(currentOpen);
-    }
-  });
+  // Optional: Keep click-outside-to-close functionality
+  // document.addEventListener("click", (e) => {
+  //   if (currentOpen && !currentOpen.contains(e.target)) {
+  //     closeDropdown(currentOpen);
+  //   }
+  // });
 });
 
 // --------------------- mobile menu --------------------- //
