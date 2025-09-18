@@ -1,7 +1,6 @@
 // ---------------- navbar dropdown ---------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
-  const triggers = document.querySelectorAll(".navbar--dropdown-trigger");
   let currentOpen = null;
 
   const openDropdown = (dropdown) => {
@@ -73,28 +72,42 @@ document.addEventListener("DOMContentLoaded", () => {
     currentOpen = null;
   };
 
-  triggers.forEach((trigger) => {
-    const parent = trigger.closest(".navbar--dropdown");
+  // Get all dropdown containers instead of just triggers
+  const dropdowns = document.querySelectorAll(".navbar--dropdown");
+
+  dropdowns.forEach((dropdown) => {
+    const trigger = dropdown.querySelector(".navbar--dropdown-trigger");
     let hoverTimeout;
 
-    // Open dropdown on hover
-    trigger.addEventListener("mouseenter", () => {
-      clearTimeout(hoverTimeout);
-      if (currentOpen && currentOpen !== parent) {
-        closeDropdown(currentOpen);
-      }
-      openDropdown(parent);
-    });
+    if (trigger) {
+      // Open dropdown on hover over trigger
+      trigger.addEventListener("mouseenter", () => {
+        clearTimeout(hoverTimeout);
+        if (currentOpen && currentOpen !== dropdown) {
+          closeDropdown(currentOpen);
+        }
+        openDropdown(dropdown);
+      });
+    } else {
+      // If no specific trigger, make the entire dropdown hoverable
+      dropdown.addEventListener("mouseenter", () => {
+        clearTimeout(hoverTimeout);
+        if (currentOpen && currentOpen !== dropdown) {
+          closeDropdown(currentOpen);
+        }
+        openDropdown(dropdown);
+      });
+    }
 
     // Close dropdown when leaving the entire dropdown container
-    parent.addEventListener("mouseleave", () => {
+    dropdown.addEventListener("mouseleave", () => {
       hoverTimeout = setTimeout(() => {
-        closeDropdown(parent);
+        closeDropdown(dropdown);
       }, 150); // Small delay to prevent accidental closes
     });
 
     // Cancel close if mouse re-enters before timeout
-    parent.addEventListener("mouseenter", () => {
+    dropdown.addEventListener("mouseenter", () => {
       clearTimeout(hoverTimeout);
     });
   });
