@@ -127,14 +127,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!mm.matches) return; // Skip if screen is larger than 991px
 
-  const trigger = document.querySelector(".nav--menu-trigger");
-  const triggerOpen = trigger?.querySelector(".trigger--open");
-  const triggerClose = trigger?.querySelector(".trigger--close");
-  const menu = document.querySelector(".navbar--menu");
-  const dropdowns = menu?.querySelectorAll("[navbar=stagger]");
+  // Try multiple possible selectors for mobile menu trigger
+  const trigger =
+    document.querySelector(".nav--menu-trigger") ||
+    document.querySelector(".mobile-menu-trigger") ||
+    document.querySelector(".menu-trigger") ||
+    document.querySelector("[data-mobile-menu-trigger]");
 
-  if (!trigger || !triggerOpen || !triggerClose || !menu || !dropdowns.length)
+  const triggerOpen =
+    trigger?.querySelector(".trigger--open") ||
+    trigger?.querySelector(".menu-open") ||
+    trigger?.querySelector(".hamburger-open");
+
+  const triggerClose =
+    trigger?.querySelector(".trigger--close") ||
+    trigger?.querySelector(".menu-close") ||
+    trigger?.querySelector(".hamburger-close");
+
+  const menu =
+    document.querySelector(".navbar--menu") ||
+    document.querySelector(".mobile-menu") ||
+    document.querySelector(".nav-menu");
+
+  const dropdowns =
+    menu?.querySelectorAll("[navbar=stagger]") ||
+    menu?.querySelectorAll(".navbar--dropdown") ||
+    menu?.querySelectorAll(".dropdown");
+
+  console.log("Mobile menu elements found:", {
+    trigger: !!trigger,
+    triggerOpen: !!triggerOpen,
+    triggerClose: !!triggerClose,
+    menu: !!menu,
+    dropdowns: dropdowns?.length || 0,
+    screenWidth: window.innerWidth,
+    isMobile: mm.matches,
+  });
+
+  if (!trigger || !menu) {
+    console.warn("Mobile menu elements not found. Available elements:", {
+      triggers: document.querySelectorAll(
+        "[class*='trigger'], [class*='menu']"
+      ),
+      menus: document.querySelectorAll("[class*='menu'], [class*='nav']"),
+    });
     return;
+  }
 
   let isOpen = false;
 
@@ -151,24 +189,26 @@ document.addEventListener("DOMContentLoaded", () => {
       { x: "100vw" },
       { x: "0vw", duration: 0.6, ease: "power4.out" },
       0
-    )
+    );
 
-    // Animate trigger icons
-    .fromTo(
+  // Only animate trigger icons if they exist
+  if (triggerOpen && triggerClose) {
+    tl.fromTo(
       triggerOpen,
       { opacity: 1, y: 0 },
       { opacity: 0, y: "-1rem", duration: 0.3, ease: "power4.out" },
       0
-    )
-    .fromTo(
+    ).fromTo(
       triggerClose,
       { opacity: 0, y: "1rem" },
       { opacity: 1, y: "0rem", duration: 0.3, ease: "power4.out" },
       0
-    )
+    );
+  }
 
-    // Dropdowns stagger in
-    .fromTo(
+  // Only animate dropdowns if they exist
+  if (dropdowns && dropdowns.length > 0) {
+    tl.fromTo(
       dropdowns,
       { opacity: 0, y: "1rem" },
       {
@@ -180,14 +220,18 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       0.2
     );
+  }
 
   // Toggle open/close
   trigger.addEventListener("click", () => {
+    console.log("Mobile menu trigger clicked! Current state:", isOpen);
     isOpen = !isOpen;
 
     if (isOpen) {
+      console.log("Opening mobile menu");
       tl.play();
     } else {
+      console.log("Closing mobile menu");
       tl.reverse().then(() => {
         gsap.set(menu, { display: "none" });
       });
