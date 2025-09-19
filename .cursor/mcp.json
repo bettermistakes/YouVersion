@@ -1,7 +1,12 @@
 {
   "mcpServers": {
     "webflow": {
-      "command": "npx mcp-remote https://mcp.webflow.com/sse"
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.webflow.com/sse"],
+      "env": {
+        "WEBFLOW_PROJECT": "youversion",
+        "WEBFLOW_SITE_ID": "6657697adbbe039fe4e7c021"
+      }
     }
   }
 }
