@@ -3,9 +3,12 @@
 }
 
 .navbar.is--scrolled {
-  background: var(--_colors---white);
   border-bottom: solid 1px #c7c7c7;
   color: var(--_colors---background-color--alternate);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(0.5rem);
+  -webkit-backdrop-filter: blur(0.5rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Characters */
