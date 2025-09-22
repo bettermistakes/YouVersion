@@ -5,7 +5,7 @@
       "args": ["-y", "mcp-remote", "https://mcp.webflow.com/sse"],
       "env": {
         "WEBFLOW_PROJECT": "youversion",
-        "WEBFLOW_SITE_ID": "6657697adbbe039fe4e7c021"
+        "WEBFLOW_SITE_ID": "68a2d1038ded21fa4f161139"
       }
     }
   }
