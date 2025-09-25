@@ -386,36 +386,69 @@ document
 
 // ------------------ accordion ------------------ //
 
-$(".faq--item").on("click", function () {
-  const question = $(this).find(".faq--question");
-  const response = $(this).find(".faq--response");
+// Function to update feature images opacity
+function updateFeatureImages(activeIndex) {
+  $(".feature--img").each(function (index) {
+    if (index === activeIndex) {
+      $(this).css("opacity", "1");
+    } else {
+      $(this).css("opacity", "0");
+    }
+  });
+}
 
-  // Close other accordions when opening new one
-  if (!question.hasClass("open")) {
-    $(".faq--question.open").each(function () {
-      const otherItem = $(this).closest(".faq--item");
-      const otherResponse = otherItem.find(".faq--response");
-      otherResponse.animate({ height: "0px" }, 500);
-      $(this).removeClass("open");
-    });
-  }
+// Function to open a specific FAQ item
+function openFaqItem(faqItem, index) {
+  const response = faqItem.find(".faq--response");
 
-  let animationDuration = 500;
+  // Close all other accordions
+  $(".faq--item.open").each(function () {
+    const otherResponse = $(this).find(".faq--response");
+    otherResponse.animate({ height: "0px" }, 500);
+    $(this).removeClass("open");
+  });
 
-  if (question.hasClass("open")) {
-    // Close the content div if already open
-    response.animate({ height: "0px" }, animationDuration);
-  } else {
-    // Open the content div if already closed
+  // Open the selected accordion
+  response.css("height", "auto");
+  let autoHeight = response.height();
+  response.css("height", "0px");
+  response.animate({ height: autoHeight }, 500, () => {
     response.css("height", "auto");
-    let autoHeight = response.height();
-    response.css("height", "0px");
-    response.animate({ height: autoHeight }, animationDuration, () => {
-      response.css("height", "auto");
+  });
 
-      // Scroll the page to the accordion, leaving 200 pixels from the top
-    });
+  faqItem.addClass("open");
+
+  // Update feature images
+  updateFeatureImages(index);
+}
+
+// Initialize FAQ accordion
+$(document).ready(function () {
+  // Open the first FAQ item on load
+  const firstFaqItem = $(".faq--item").first();
+  if (firstFaqItem.length) {
+    openFaqItem(firstFaqItem, 0);
   }
-  // Open and close the toggle div
-  question.toggleClass("open");
+
+  // Set initial opacity for feature images
+  $(".feature--img").css("opacity", "0");
+  $(".feature--img").first().css("opacity", "1");
+});
+
+$(".faq--item").on("click", function () {
+  const faqItems = $(".faq--item");
+  const currentIndex = faqItems.index(this);
+
+  // If this item is already open, close it
+  if ($(this).hasClass("open")) {
+    const response = $(this).find(".faq--response");
+    response.animate({ height: "0px" }, 500);
+    $(this).removeClass("open");
+
+    // Hide all feature images when closing
+    $(".feature--img").css("opacity", "0");
+  } else {
+    // Open this item
+    openFaqItem($(this), currentIndex);
+  }
 });
