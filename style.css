@@ -44,8 +44,8 @@
   transition: all 0.3s ease;
 }
 
-.faq--question.open .faq--icon {
-  transform: rotate(180deg);
+.faq--item.open {
+  border-bottom: 1px solid var(--_colors---black);
 }
 
 .faq--response {
