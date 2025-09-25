@@ -383,3 +383,39 @@ document
       }
     });
   });
+
+// ------------------ accordion ------------------ //
+
+$(".faq--item").on("click", function () {
+  const question = $(this).find(".faq--question");
+  const response = $(this).find(".faq--response");
+
+  // Close other accordions when opening new one
+  if (!question.hasClass("open")) {
+    $(".faq--question.open").each(function () {
+      const otherItem = $(this).closest(".faq--item");
+      const otherResponse = otherItem.find(".faq--response");
+      otherResponse.animate({ height: "0px" }, 500);
+      $(this).removeClass("open");
+    });
+  }
+
+  let animationDuration = 500;
+
+  if (question.hasClass("open")) {
+    // Close the content div if already open
+    response.animate({ height: "0px" }, animationDuration);
+  } else {
+    // Open the content div if already closed
+    response.css("height", "auto");
+    let autoHeight = response.height();
+    response.css("height", "0px");
+    response.animate({ height: autoHeight }, animationDuration, () => {
+      response.css("height", "auto");
+
+      // Scroll the page to the accordion, leaving 200 pixels from the top
+    });
+  }
+  // Open and close the toggle div
+  question.toggleClass("open");
+});

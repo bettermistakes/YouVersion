@@ -39,3 +39,15 @@
 [animate="hover"]:hover .btn-animate-chars__bg {
   inset: 0.125em;
 }
+
+.faq--icon {
+  transition: all 0.3s ease;
+}
+
+.faq--question.open .faq--icon {
+  transform: rotate(180deg);
+}
+
+.faq--response {
+  height: 0;
+}
