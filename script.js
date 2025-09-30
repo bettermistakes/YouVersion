@@ -452,3 +452,116 @@ $(".faq--item").on("click", function () {
     openFaqItem($(this), currentIndex);
   }
 });
+
+// ------------------ story popup animation ------------------ //
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Function to open the story popup
+  const openStoryPopup = () => {
+    const contactParent = document.querySelector(".contact--parent");
+    const contactParentBg = document.querySelector(".contact--parent-bg");
+    const contactParentParent = document.querySelector(
+      ".contact--parent-parent"
+    );
+
+    if (!contactParent || !contactParentBg || !contactParentParent) {
+      console.warn("Story popup elements not found");
+      return;
+    }
+
+    // Create GSAP timeline for opening animation
+    const tl = gsap.timeline();
+
+    tl
+      // Show the popup container
+      .set(contactParent, { display: "flex" })
+
+      // Animate background opacity
+      .fromTo(
+        contactParentBg,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: "power2.out" },
+        0
+      )
+
+      // Animate content slide in
+      .fromTo(
+        contactParentParent,
+        { x: "100vw" },
+        { x: "0vw", duration: 0.5, ease: "power3.out" },
+        0.1
+      );
+  };
+
+  // Function to close the story popup
+  const closeStoryPopup = () => {
+    const contactParent = document.querySelector(".contact--parent");
+    const contactParentBg = document.querySelector(".contact--parent-bg");
+    const contactParentParent = document.querySelector(
+      ".contact--parent-parent"
+    );
+
+    if (!contactParent || !contactParentBg || !contactParentParent) {
+      console.warn("Story popup elements not found");
+      return;
+    }
+
+    // Create GSAP timeline for closing animation
+    const tl = gsap.timeline();
+
+    tl
+      // Animate content slide out
+      .to(contactParentParent, {
+        x: "100vw",
+        duration: 0.4,
+        ease: "power3.in",
+      })
+
+      // Animate background opacity out
+      .to(
+        contactParentBg,
+        { opacity: 0, duration: 0.3, ease: "power2.in" },
+        0.1
+      )
+
+      // Hide the popup container
+      .set(contactParent, { display: "none" });
+  };
+
+  // Add click event listeners to elements with animate="storypopup"
+  document.querySelectorAll('[animate="storypopup"]').forEach((element) => {
+    element.addEventListener("click", (e) => {
+      e.preventDefault();
+      openStoryPopup();
+    });
+  });
+
+  // Add click event listeners to close buttons
+  document.querySelectorAll(".popup--close").forEach((closeBtn) => {
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeStoryPopup();
+    });
+  });
+
+  // Add click event listener to background overlay
+  const contactParentBg = document.querySelector(".contact--parent-bg");
+  if (contactParentBg) {
+    contactParentBg.addEventListener("click", (e) => {
+      // Only close if clicking directly on the background (not on child elements)
+      if (e.target === contactParentBg) {
+        closeStoryPopup();
+      }
+    });
+  }
+
+  // Optional: Close popup with Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const contactParent = document.querySelector(".contact--parent");
+      if (contactParent && contactParent.style.display === "flex") {
+        closeStoryPopup();
+      }
+    }
+  });
+});
