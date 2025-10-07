@@ -566,3 +566,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// ------------------ banner close functionality ------------------ //
+
+document.addEventListener("DOMContentLoaded", () => {
+  const banner = document.querySelector(".navbar--banner");
+  const closeTrigger = document.querySelector(".banner--close-trigger");
+
+  if (!banner || !closeTrigger) {
+    return; // Exit if elements don't exist
+  }
+
+  // Check if banner was previously closed
+  const bannerClosed = localStorage.getItem("bannerClosed");
+
+  if (bannerClosed === "true") {
+    // If banner was closed before, set height to 0 immediately
+    gsap.set(banner, { height: 0, overflow: "hidden" });
+  }
+
+  // Add click event to close trigger
+  closeTrigger.addEventListener("click", () => {
+    // Animate banner to height 0
+    gsap.to(banner, {
+      height: 0,
+      duration: 0.5,
+      ease: "power3.out",
+      onComplete: () => {
+        // Set overflow hidden to prevent content from showing
+        gsap.set(banner, { overflow: "hidden" });
+      },
+    });
+
+    // Save state to localStorage
+    localStorage.setItem("bannerClosed", "true");
+  });
+});
