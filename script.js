@@ -599,8 +599,8 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .fromTo(
         contactParentParent,
-        { y: "100vw" },
-        { y: "0vw", duration: 0.5, ease: "power3.out" },
+        { x: "100vw" },
+        { x: "0vw", duration: 0.5, ease: "power3.out" },
         0
       );
   };
@@ -625,7 +625,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Animate content slide out and background fade out simultaneously
       .to(
         contactParentParent,
-        { y: "100vw", duration: 0.4, ease: "power3.in" },
+        { x: "100vw", duration: 0.4, ease: "power3.in" },
         0
       )
       .to(contactParentBg, { opacity: 0, duration: 0.4, ease: "power2.in" }, 0)
