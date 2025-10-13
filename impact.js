@@ -113,4 +113,44 @@ function initMarqueeScrollDirection() {
 // Initialize Marquee with Scroll Direction
 document.addEventListener("DOMContentLoaded", () => {
   initMarqueeScrollDirection();
+  initWhyItMattersScrollAnimation();
 });
+
+// ---------------- Why It Matters Scroll Animation ---------------- //
+
+function initWhyItMattersScrollAnimation() {
+  // Get all triggers and cards
+  const triggers = document.querySelectorAll(".whyitmatters-trigger");
+  const cards = document.querySelectorAll(".feature--card.is--card");
+
+  // Make sure we have elements to work with
+  if (triggers.length === 0 || cards.length === 0) {
+    console.warn(
+      "No .whyitmatters-trigger or .feature--card.is--card elements found"
+    );
+    return;
+  }
+
+  // Loop through each trigger and create a scroll animation for its corresponding card
+  triggers.forEach((trigger, index) => {
+    // Check if corresponding card exists
+    if (index < cards.length) {
+      const card = cards[index];
+
+      // Create ScrollTrigger animation
+      gsap.to(card, {
+        y: "-60vh",
+        x: "-3rem",
+        rotate: -10,
+        ease: "none",
+        scrollTrigger: {
+          trigger: trigger,
+          start: "top center",
+          end: "top top",
+          scrub: true,
+          markers: false, // Set to true for debugging
+        },
+      });
+    }
+  });
+}
