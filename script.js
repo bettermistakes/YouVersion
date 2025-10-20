@@ -682,12 +682,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return; // Exit if elements don't exist
   }
 
-  // Check if banner was previously closed
-  const bannerClosed = localStorage.getItem("bannerClosed");
+  // Check if banner was previously closed and when
+  const bannerClosedTimestamp = localStorage.getItem("bannerClosedTimestamp");
 
-  if (bannerClosed === "true") {
-    // If banner was closed before, set height to 0 immediately
-    gsap.set(banner, { height: 0, overflow: "hidden" });
+  if (bannerClosedTimestamp) {
+    const closedTime = parseInt(bannerClosedTimestamp, 10);
+    const currentTime = Date.now();
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+    // Check if 24 hours have passed
+    if (currentTime - closedTime < twentyFourHours) {
+      // If less than 24 hours, keep banner hidden
+      gsap.set(banner, { height: 0, overflow: "hidden" });
+    } else {
+      // If 24 hours have passed, clear the timestamp to show banner again
+      localStorage.removeItem("bannerClosedTimestamp");
+    }
   }
 
   // Add click event to close trigger
@@ -703,7 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
 
-    // Save state to localStorage
-    localStorage.setItem("bannerClosed", "true");
+    // Save current timestamp to localStorage
+    localStorage.setItem("bannerClosedTimestamp", Date.now().toString());
   });
 });
