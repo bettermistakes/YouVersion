@@ -723,7 +723,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // News Template Social Sharing Functionality
 document.addEventListener("DOMContentLoaded", function () {
   // Get all social share links (new class structure)
-  const socialShareLinks = document.querySelectorAll(".new--share-link");
+  const socialShareLinks = document.querySelectorAll(
+    ".new--share-link.is--post"
+  );
   const popupCopy = document.querySelector(".popup--copy");
 
   // Get current page URL and title
