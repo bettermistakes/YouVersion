@@ -717,3 +717,109 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("bannerClosedTimestamp", Date.now().toString());
   });
 });
+
+// ------------------ news social sharing ------------------ //
+
+// News Template Social Sharing Functionality
+document.addEventListener("DOMContentLoaded", function () {
+  // Get all social share links (new class structure)
+  const socialShareLinks = document.querySelectorAll(".new--share-link");
+  const popupCopy = document.querySelector(".popup--copy");
+
+  // Get current page URL and title
+  const currentUrl = window.location.href;
+  const currentTitle = document.title;
+
+  // Social sharing URLs
+  const shareUrls = {
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+      currentUrl
+    )}`,
+    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      currentUrl
+    )}&text=${encodeURIComponent(currentTitle)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      currentUrl
+    )}`,
+  };
+
+  // Function to show copy popup
+  function showCopyPopup() {
+    if (popupCopy) {
+      popupCopy.style.display = "flex";
+      popupCopy.style.opacity = "1";
+      popupCopy.style.transform = "translateY(0)";
+
+      // Hide popup after 2 seconds
+      setTimeout(() => {
+        popupCopy.style.opacity = "0";
+        popupCopy.style.transform = "translateY(-10px)";
+
+        setTimeout(() => {
+          popupCopy.style.display = "none";
+        }, 300);
+      }, 2000);
+    }
+  }
+
+  // Function to copy URL to clipboard
+  async function copyToClipboard() {
+    try {
+      await navigator.clipboard.writeText(currentUrl);
+      showCopyPopup();
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = currentUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      showCopyPopup();
+    }
+  }
+
+  // Function to open social sharing window
+  function openSocialShare(url) {
+    const width = 600;
+    const height = 400;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+
+    window.open(
+      url,
+      "social-share",
+      `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+    );
+  }
+
+  // Add click event listeners to each social share link
+  socialShareLinks.forEach((link, index) => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      switch (index) {
+        case 0: // First link - Copy to clipboard
+          copyToClipboard();
+          break;
+        case 1: // Second link - LinkedIn
+          openSocialShare(shareUrls.linkedin);
+          break;
+        case 2: // Third link - X (Twitter)
+          openSocialShare(shareUrls.twitter);
+          break;
+        case 3: // Fourth link - Facebook
+          openSocialShare(shareUrls.facebook);
+          break;
+      }
+    });
+  });
+
+  // Initialize popup as hidden
+  if (popupCopy) {
+    popupCopy.style.display = "none";
+    popupCopy.style.opacity = "0";
+    popupCopy.style.transform = "translateY(-10px)";
+    popupCopy.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+  }
+});
