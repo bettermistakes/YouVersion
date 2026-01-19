@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isOpen = false;
   let tl = null;
-  let originalNavbarBg = null;
+  let originalNavbarColor = null;
 
   // Function to initialize mobile menu timeline
   function initMobileMenuTimeline() {
@@ -189,10 +189,10 @@ document.addEventListener("DOMContentLoaded", () => {
       tl.kill();
     }
 
-    // Store original navbar background color if not already stored
-    if (navbar && originalNavbarBg === null) {
+    // Store original navbar text color if not already stored
+    if (navbar && originalNavbarColor === null) {
       const computedStyle = window.getComputedStyle(navbar);
-      originalNavbarBg = computedStyle.backgroundColor;
+      originalNavbarColor = computedStyle.color;
     }
 
     // Setup GSAP timeline
@@ -210,12 +210,12 @@ document.addEventListener("DOMContentLoaded", () => {
         0
       );
 
-    // Animate navbar background color to black
+    // Animate navbar text color to black
     if (navbar) {
       tl.to(
         navbar,
         {
-          backgroundColor: "#000000",
+          color: "#000000",
           duration: 0.4,
           ease: "power2.out",
         },
@@ -287,9 +287,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dropdowns && dropdowns.length > 0) {
         gsap.set(dropdowns, { clearProps: "all" });
       }
-      // Reset navbar background color
-      if (navbar && originalNavbarBg !== null) {
-        gsap.set(navbar, { backgroundColor: originalNavbarBg });
+      // Reset navbar text color
+      if (navbar && originalNavbarColor !== null) {
+        gsap.set(navbar, { color: originalNavbarColor });
       }
     }
   }
