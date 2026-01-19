@@ -125,8 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   const mm = window.matchMedia("(max-width: 991px)");
 
-  if (!mm.matches) return; // Skip if screen is larger than 991px
-
   // Try multiple possible selectors for mobile menu trigger
   const trigger =
     document.querySelector(".nav--menu-trigger") ||
@@ -175,76 +173,136 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let isOpen = false;
+  let tl = null;
 
-  // Setup GSAP timeline
-  const tl = gsap.timeline({ paused: true, reversed: true });
+  // Function to initialize mobile menu timeline
+  function initMobileMenuTimeline() {
+    // Clear previous timeline if it exists
+    if (tl) {
+      tl.kill();
+    }
 
-  tl
-    // Show menu container
-    .set(menu, { display: "flex" })
+    // Setup GSAP timeline
+    tl = gsap.timeline({ paused: true, reversed: true });
 
-    // Slide menu in
-    .fromTo(
-      menu,
-      { x: "100vw" },
-      { x: "0vw", duration: 0.6, ease: "power4.out" },
-      0
-    );
+    tl
+      // Show menu container
+      .set(menu, { display: "flex" })
 
-  // Only animate trigger icons if they exist
-  if (triggerOpen && triggerClose) {
-    tl.fromTo(
-      triggerOpen,
-      { opacity: 1, y: 0 },
-      { opacity: 0, y: "-1rem", duration: 0.3, ease: "power4.out" },
-      0
-    ).fromTo(
-      triggerClose,
-      { opacity: 0, y: "1rem" },
-      { opacity: 1, y: "0rem", duration: 0.3, ease: "power4.out" },
-      0
-    );
+      // Slide menu in
+      .fromTo(
+        menu,
+        { x: "100vw" },
+        { x: "0vw", duration: 0.6, ease: "power4.out" },
+        0
+      );
+
+    // Only animate trigger icons if they exist
+    if (triggerOpen && triggerClose) {
+      tl.fromTo(
+        triggerOpen,
+        { opacity: 1, y: 0 },
+        { opacity: 0, y: "-1rem", duration: 0.3, ease: "power4.out" },
+        0
+      ).fromTo(
+        triggerClose,
+        { opacity: 0, y: "1rem" },
+        { opacity: 1, y: "0rem", duration: 0.3, ease: "power4.out" },
+        0
+      );
+    }
+
+    // Only animate dropdowns if they exist
+    if (dropdowns && dropdowns.length > 0) {
+      tl.fromTo(
+        dropdowns,
+        { opacity: 0, y: "1rem" },
+        {
+          opacity: 1,
+          y: "0rem",
+          duration: 0.6,
+          ease: "power4.out",
+          stagger: 0.05,
+        },
+        0.2
+      );
+    }
   }
 
-  // Only animate dropdowns if they exist
-  if (dropdowns && dropdowns.length > 0) {
-    tl.fromTo(
-      dropdowns,
-      { opacity: 0, y: "1rem" },
-      {
-        opacity: 1,
-        y: "0rem",
-        duration: 0.6,
-        ease: "power4.out",
-        stagger: 0.05,
-      },
-      0.2
-    );
+  // Function to handle viewport changes
+  function handleViewportChange() {
+    if (mm.matches) {
+      // Mobile view - ensure timeline is initialized
+      if (!tl) {
+        initMobileMenuTimeline();
+      }
+    } else {
+      // Desktop view - reset mobile menu state
+      if (isOpen) {
+        isOpen = false;
+        if (tl) {
+          tl.kill();
+          tl = null;
+        }
+      }
+      // Reset menu styles for desktop
+      gsap.set(menu, { x: "0vw", display: "" });
+      if (triggerOpen) {
+        gsap.set(triggerOpen, { opacity: 1, y: 0 });
+      }
+      if (triggerClose) {
+        gsap.set(triggerClose, { opacity: 0, y: "1rem" });
+      }
+      if (dropdowns && dropdowns.length > 0) {
+        gsap.set(dropdowns, { opacity: 1, y: "0rem" });
+      }
+    }
   }
+
+  // Initialize on page load
+  handleViewportChange();
+
+  // Listen for viewport changes
+  mm.addEventListener("change", handleViewportChange);
 
   // Toggle open/close
   trigger.addEventListener("click", () => {
+    // Only work on mobile
+    if (!mm.matches) return;
+
     console.log("Mobile menu trigger clicked! Current state:", isOpen);
     isOpen = !isOpen;
 
     if (isOpen) {
       console.log("Opening mobile menu");
+      if (!tl) {
+        initMobileMenuTimeline();
+      }
       tl.play();
     } else {
       console.log("Closing mobile menu");
-      tl.reverse().then(() => {
-        gsap.set(menu, { display: "none" });
-      });
+      if (tl) {
+        tl.reverse().then(() => {
+          gsap.set(menu, { display: "none" });
+        });
+      }
     }
   });
 
   // Optional: click outside to close
   document.addEventListener("click", (e) => {
-    if (isOpen && !trigger.contains(e.target) && !menu.contains(e.target)) {
-      tl.reverse().then(() => {
-        isOpen = false;
-        gsap.set(menu, { display: "none" });
-      });
+    if (
+      mm.matches &&
+      isOpen &&
+      !trigger.contains(e.target) &&
+      !menu.contains(e.target)
+    ) {
+      if (tl) {
+        tl.reverse().then(() => {
+          isOpen = false;
+          gsap.set(menu, { display: "none" });
+        });
+      }
     }
   });
 });
