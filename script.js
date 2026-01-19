@@ -246,15 +246,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       // Reset menu styles for desktop
-      gsap.set(menu, { x: "0vw", display: "" });
+      gsap.set(menu, { x: "0vw", display: "", clearProps: "x" });
       if (triggerOpen) {
-        gsap.set(triggerOpen, { opacity: 1, y: 0 });
+        gsap.set(triggerOpen, { opacity: 1, y: 0, clearProps: "opacity,y" });
       }
       if (triggerClose) {
-        gsap.set(triggerClose, { opacity: 0, y: "1rem" });
+        gsap.set(triggerClose, { opacity: 0, y: "1rem", clearProps: "opacity,y" });
       }
+      // Clear all GSAP inline styles from dropdowns to let desktop CSS/animations take over
       if (dropdowns && dropdowns.length > 0) {
-        gsap.set(dropdowns, { opacity: 1, y: "0rem" });
+        gsap.set(dropdowns, { clearProps: "all" });
       }
     }
   }
