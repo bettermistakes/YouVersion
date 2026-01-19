@@ -11,6 +11,14 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Mobile menu open state - change navbar text to black */
+@media (max-width: 991px) {
+  .navbar.mobile-menu-open,
+  .navbar.mobile-menu-open * {
+    color: #000000 !important;
+  }
+}
+
 /* Characters */
 [animate="hover"] [data-button-animate-chars] {
   overflow: hidden;

@@ -152,26 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".nav") ||
     document.querySelector("nav");
 
-  // Get navbar elements that should change color (excluding mobile menu content)
-  // Target direct navbar children and specific navbar elements, not menu items
-  const navbarTextElements = [];
-  
-  if (navbar) {
-    // Get all links and text elements in navbar
-    const allNavbarElements = [
-      ...navbar.querySelectorAll("a"),
-      ...navbar.querySelectorAll("[class*='nav']"),
-      ...navbar.querySelectorAll(".w-nav-link"),
-    ];
-    
-    // Filter out elements that are inside the mobile menu
-    allNavbarElements.forEach((el) => {
-      if (!menu || !menu.contains(el)) {
-        navbarTextElements.push(el);
-      }
-    });
-  }
-
   const dropdowns =
     menu?.querySelectorAll("[navbar=stagger]") ||
     menu?.querySelectorAll(".navbar--dropdown") ||
@@ -183,8 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
     triggerClose: !!triggerClose,
     menu: !!menu,
     navbar: !!navbar,
-    navbarTextElements: navbarTextElements.length,
-    navbarTextElementsList: navbarTextElements,
     dropdowns: dropdowns?.length || 0,
     screenWidth: window.innerWidth,
     isMobile: mm.matches,
@@ -202,24 +180,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isOpen = false;
   let tl = null;
-  let originalNavbarColors = [];
 
   // Function to initialize mobile menu timeline
   function initMobileMenuTimeline() {
     // Clear previous timeline if it exists
     if (tl) {
       tl.kill();
-    }
-
-    // Store original text colors if not already stored
-    if (navbarTextElements.length > 0 && originalNavbarColors.length === 0) {
-      navbarTextElements.forEach((el) => {
-        const computedStyle = window.getComputedStyle(el);
-        originalNavbarColors.push({
-          element: el,
-          color: computedStyle.color,
-        });
-      });
     }
 
     // Setup GSAP timeline
@@ -237,17 +203,11 @@ document.addEventListener("DOMContentLoaded", () => {
         0
       );
 
-    // Animate navbar text elements color to black
-    if (navbarTextElements.length > 0) {
-      tl.to(
-        navbarTextElements,
-        {
-          color: "#000000",
-          duration: 0.4,
-          ease: "power2.out",
-        },
-        0
-      );
+    // Add class to navbar for black text styling
+    if (navbar) {
+      tl.add(() => {
+        navbar.classList.add("mobile-menu-open");
+      }, 0);
     }
 
     // Only animate trigger icons if they exist
@@ -314,11 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dropdowns && dropdowns.length > 0) {
         gsap.set(dropdowns, { clearProps: "all" });
       }
-      // Reset navbar text colors to original
-      if (originalNavbarColors.length > 0) {
-        originalNavbarColors.forEach(({ element, color }) => {
-          gsap.set(element, { color: color });
-        });
+      // Remove mobile menu class
+      if (navbar) {
+        navbar.classList.remove("mobile-menu-open");
       }
     }
   }
@@ -348,6 +306,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (tl) {
         tl.reverse().then(() => {
           gsap.set(menu, { display: "none" });
+          // Remove class when menu is closed
+          if (navbar) {
+            navbar.classList.remove("mobile-menu-open");
+          }
         });
       }
     }
@@ -365,6 +327,10 @@ document.addEventListener("DOMContentLoaded", () => {
         tl.reverse().then(() => {
           isOpen = false;
           gsap.set(menu, { display: "none" });
+          // Remove class when menu is closed
+          if (navbar) {
+            navbar.classList.remove("mobile-menu-open");
+          }
         });
       }
     }
