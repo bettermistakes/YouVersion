@@ -152,15 +152,25 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".nav") ||
     document.querySelector("nav");
 
-  // Get all text elements in navbar (links, text, etc.)
-  const navbarTextElements = navbar
-    ? [
-        ...navbar.querySelectorAll("a"),
-        ...navbar.querySelectorAll(".navbar--link"),
-        ...navbar.querySelectorAll(".nav-link"),
-        ...navbar.querySelectorAll("[class*='navbar']"),
-      ].filter((el) => !menu?.contains(el)) // Exclude elements inside the mobile menu
-    : [];
+  // Get navbar elements that should change color (excluding mobile menu content)
+  // Target direct navbar children and specific navbar elements, not menu items
+  const navbarTextElements = [];
+  
+  if (navbar) {
+    // Get all links and text elements in navbar
+    const allNavbarElements = [
+      ...navbar.querySelectorAll("a"),
+      ...navbar.querySelectorAll("[class*='nav']"),
+      ...navbar.querySelectorAll(".w-nav-link"),
+    ];
+    
+    // Filter out elements that are inside the mobile menu
+    allNavbarElements.forEach((el) => {
+      if (!menu || !menu.contains(el)) {
+        navbarTextElements.push(el);
+      }
+    });
+  }
 
   const dropdowns =
     menu?.querySelectorAll("[navbar=stagger]") ||
@@ -174,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     menu: !!menu,
     navbar: !!navbar,
     navbarTextElements: navbarTextElements.length,
+    navbarTextElementsList: navbarTextElements,
     dropdowns: dropdowns?.length || 0,
     screenWidth: window.innerWidth,
     isMobile: mm.matches,
