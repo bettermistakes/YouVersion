@@ -147,6 +147,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".mobile-menu") ||
     document.querySelector(".nav-menu");
 
+  const navbar =
+    document.querySelector(".navbar") ||
+    document.querySelector(".nav") ||
+    document.querySelector("nav");
+
   const dropdowns =
     menu?.querySelectorAll("[navbar=stagger]") ||
     menu?.querySelectorAll(".navbar--dropdown") ||
@@ -157,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
     triggerOpen: !!triggerOpen,
     triggerClose: !!triggerClose,
     menu: !!menu,
+    navbar: !!navbar,
     dropdowns: dropdowns?.length || 0,
     screenWidth: window.innerWidth,
     isMobile: mm.matches,
@@ -174,12 +180,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isOpen = false;
   let tl = null;
+  let originalNavbarBg = null;
 
   // Function to initialize mobile menu timeline
   function initMobileMenuTimeline() {
     // Clear previous timeline if it exists
     if (tl) {
       tl.kill();
+    }
+
+    // Store original navbar background color if not already stored
+    if (navbar && originalNavbarBg === null) {
+      const computedStyle = window.getComputedStyle(navbar);
+      originalNavbarBg = computedStyle.backgroundColor;
     }
 
     // Setup GSAP timeline
@@ -196,6 +209,19 @@ document.addEventListener("DOMContentLoaded", () => {
         { x: "0vw", duration: 0.6, ease: "power4.out" },
         0
       );
+
+    // Animate navbar background color to black
+    if (navbar) {
+      tl.to(
+        navbar,
+        {
+          backgroundColor: "#000000",
+          duration: 0.4,
+          ease: "power2.out",
+        },
+        0
+      );
+    }
 
     // Only animate trigger icons if they exist
     if (triggerOpen && triggerClose) {
@@ -251,11 +277,19 @@ document.addEventListener("DOMContentLoaded", () => {
         gsap.set(triggerOpen, { opacity: 1, y: 0, clearProps: "opacity,y" });
       }
       if (triggerClose) {
-        gsap.set(triggerClose, { opacity: 0, y: "1rem", clearProps: "opacity,y" });
+        gsap.set(triggerClose, {
+          opacity: 0,
+          y: "1rem",
+          clearProps: "opacity,y",
+        });
       }
       // Clear all GSAP inline styles from dropdowns to let desktop CSS/animations take over
       if (dropdowns && dropdowns.length > 0) {
         gsap.set(dropdowns, { clearProps: "all" });
+      }
+      // Reset navbar background color
+      if (navbar && originalNavbarBg !== null) {
+        gsap.set(navbar, { backgroundColor: originalNavbarBg });
       }
     }
   }
