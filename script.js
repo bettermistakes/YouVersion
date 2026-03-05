@@ -495,8 +495,9 @@ function openFaqItem(faqItem, index) {
     return;
   }
 
-  // Close all other accordions
+  // Close all other accordions (skip the one we're opening to avoid close-then-open race)
   $(".faq--item.open").each(function () {
+    if (this === faqItem[0]) return;
     const otherResponse = $(this).find(".faq--response");
     otherResponse.animate({ height: "0px" }, 500);
     $(this).removeClass("open");
