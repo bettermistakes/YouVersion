@@ -526,19 +526,46 @@ $(document).ready(function () {
   const faqItems = $(".faq--item");
   console.log("[FAQ] document.ready: .faq--item count =", faqItems.length, faqItems.length ? faqItems.toArray() : "(none found)");
 
-  // Open the first FAQ item on load (defer until after layout so height measurement works)
+  // First *visible* FAQ item (skips items inside display:none / hidden sections, e.g. other tabs)
+  function getFirstVisibleFaqItem() {
+    return $(".faq--item").filter(function () {
+      return this.offsetParent != null;
+    }).first();
+  }
+
   function openFirstFaq() {
-    const firstFaqItem = $(".faq--item").first();
-    console.log("[FAQ] openFirstFaq (after rAF): first item found =", firstFaqItem.length, firstFaqItem[0] || "(none)");
+    const firstFaqItem = getFirstVisibleFaqItem();
+    console.log("[FAQ] openFirstFaq (after rAF): first visible item =", firstFaqItem.length, firstFaqItem[0] || "(none)");
     if (firstFaqItem.length) {
-      openFaqItem(firstFaqItem, 0);
+      const index = $(".faq--item").index(firstFaqItem[0]);
+      openFaqItem(firstFaqItem, index);
     } else {
-      console.warn("[FAQ] openFirstFaq: no .faq--item elements, skipping open on load");
+      // Fallback: first in DOM (e.g. section not yet visible)
+      const fallback = $(".faq--item").first();
+      if (fallback.length) {
+        console.log("[FAQ] openFirstFaq: no visible item, using first in DOM");
+        openFaqItem(fallback, 0);
+      } else {
+        console.warn("[FAQ] openFirstFaq: no .faq--item elements");
+      }
     }
   }
   requestAnimationFrame(function () {
     requestAnimationFrame(openFirstFaq);
   });
+
+  // Retry after delay (handles pages where Webflow/other scripts run after us or FAQ section is revealed later)
+  function ensureFirstFaqOpen() {
+    const hasOpen = $(".faq--item.open").length > 0;
+    if (hasOpen) return;
+    const firstFaqItem = getFirstVisibleFaqItem();
+    if (!firstFaqItem.length) return;
+    console.log("[FAQ] ensureFirstFaqOpen: no open item, opening first visible (retry)");
+    const index = $(".faq--item").index(firstFaqItem[0]);
+    openFaqItem(firstFaqItem, index);
+  }
+  setTimeout(ensureFirstFaqOpen, 400);
+  setTimeout(ensureFirstFaqOpen, 1000);
 
   // Set initial opacity for feature images
   $(".feature--img").css("opacity", "0");
