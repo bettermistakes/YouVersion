@@ -489,6 +489,7 @@ function updateFeatureImages(activeIndex) {
 // Function to open a specific FAQ item
 function openFaqItem(faqItem, index) {
   const response = faqItem.find(".faq--response");
+  if (!response.length) return;
 
   // Close all other accordions
   $(".faq--item.open").each(function () {
@@ -497,9 +498,12 @@ function openFaqItem(faqItem, index) {
     $(this).removeClass("open");
   });
 
-  // Open the selected accordion
+  // Open the selected accordion: measure content height (use scrollHeight if height is 0 before reflow)
   response.css("height", "auto");
   let autoHeight = response.height();
+  if (autoHeight === 0 && response[0]) {
+    autoHeight = response[0].scrollHeight;
+  }
   response.css("height", "0px");
   response.animate({ height: autoHeight }, 500, () => {
     response.css("height", "auto");
@@ -513,33 +517,38 @@ function openFaqItem(faqItem, index) {
 
 // Initialize FAQ accordion
 $(document).ready(function () {
-  // Open the first FAQ item on load
-  const firstFaqItem = $(".faq--item").first();
-  if (firstFaqItem.length) {
-    openFaqItem(firstFaqItem, 0);
+  // Open the first FAQ item on load (defer until after layout so height measurement works)
+  function openFirstFaq() {
+    const firstFaqItem = $(".faq--item").first();
+    if (firstFaqItem.length) {
+      openFaqItem(firstFaqItem, 0);
+    }
   }
+  requestAnimationFrame(function () {
+    requestAnimationFrame(openFirstFaq);
+  });
 
   // Set initial opacity for feature images
   $(".feature--img").css("opacity", "0");
   $(".feature--img").first().css("opacity", "1");
-});
 
-$(".faq--item").on("click", function () {
-  const faqItems = $(".faq--item");
-  const currentIndex = faqItems.index(this);
+  $(".faq--item").on("click", function () {
+    const faqItems = $(".faq--item");
+    const currentIndex = faqItems.index(this);
 
-  // If this item is already open, close it
-  if ($(this).hasClass("open")) {
-    const response = $(this).find(".faq--response");
-    response.animate({ height: "0px" }, 500);
-    $(this).removeClass("open");
+    // If this item is already open, close it
+    if ($(this).hasClass("open")) {
+      const response = $(this).find(".faq--response");
+      response.animate({ height: "0px" }, 500);
+      $(this).removeClass("open");
 
-    // Hide all feature images when closing
-    $(".feature--img").css("opacity", "0");
-  } else {
-    // Open this item
-    openFaqItem($(this), currentIndex);
-  }
+      // Hide all feature images when closing
+      $(".feature--img").css("opacity", "0");
+    } else {
+      // Open this item
+      openFaqItem($(this), currentIndex);
+    }
+  });
 });
 
 // ------------------ story popup animation ------------------ //
