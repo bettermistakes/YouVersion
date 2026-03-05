@@ -495,9 +495,11 @@ function openFaqItem(faqItem, index, instant) {
     return;
   }
 
-  // Close all other accordions (skip the one we're opening to avoid close-then-open race)
+  // Close other open items in the same group only (siblings under same parent)
+  const groupParent = faqItem.parent()[0];
   $(".faq--item.open").each(function () {
     if (this === faqItem[0]) return;
+    if ($(this).parent()[0] !== groupParent) return; // different group, leave it open
     const otherResponse = $(this).find(".faq--response");
     if (instant) {
       otherResponse.css("height", "0");
@@ -534,43 +536,50 @@ $(document).ready(function () {
   const faqItems = $(".faq--item");
   console.log("[FAQ] document.ready: .faq--item count =", faqItems.length, faqItems.length ? faqItems.toArray() : "(none found)");
 
-  // First *visible* FAQ item (skips items inside display:none / hidden sections, e.g. other tabs)
-  function getFirstVisibleFaqItem() {
-    return $(".faq--item").filter(function () {
-      return this.offsetParent != null;
-    }).first();
+  // Unique parent elements that contain .faq--item (each is one "group" of siblings)
+  function getFaqGroups() {
+    const parents = new Set();
+    $(".faq--item").each(function () {
+      const parent = $(this).parent()[0];
+      if (parent) parents.add(parent);
+    });
+    return Array.from(parents);
   }
 
-  function openFirstFaq() {
-    const firstFaqItem = getFirstVisibleFaqItem();
-    console.log("[FAQ] openFirstFaq (after rAF): first visible item =", firstFaqItem.length, firstFaqItem[0] || "(none)");
-    if (firstFaqItem.length) {
-      const index = $(".faq--item").index(firstFaqItem[0]);
-      openFaqItem(firstFaqItem, index, true); // instant: no animation so state sticks on load
-    } else {
-      // Fallback: first in DOM (e.g. section not yet visible)
-      const fallback = $(".faq--item").first();
-      if (fallback.length) {
-        console.log("[FAQ] openFirstFaq: no visible item, using first in DOM");
-        openFaqItem(fallback, 0, true);
-      } else {
-        console.warn("[FAQ] openFirstFaq: no .faq--item elements");
+  // Open the first item in each group of siblings (each FAQ section)
+  function openFirstInEachGroup() {
+    const groups = getFaqGroups();
+    console.log("[FAQ] openFirstInEachGroup: found", groups.length, "group(s)");
+    groups.forEach(function (parentEl) {
+      const firstInGroup = $(parentEl).children(".faq--item").first();
+      if (firstInGroup.length) {
+        const index = $(".faq--item").index(firstInGroup[0]);
+        openFaqItem(firstInGroup, index, true);
       }
-    }
+    });
   }
+
   requestAnimationFrame(function () {
-    requestAnimationFrame(openFirstFaq);
+    requestAnimationFrame(openFirstInEachGroup);
   });
 
   // Retry after delay (handles pages where Webflow/other scripts run after us or FAQ section is revealed later)
   function ensureFirstFaqOpen() {
-    const hasOpen = $(".faq--item.open").length > 0;
-    if (hasOpen) return;
-    const firstFaqItem = getFirstVisibleFaqItem();
-    if (!firstFaqItem.length) return;
-    console.log("[FAQ] ensureFirstFaqOpen: no open item, opening first visible (retry)");
-    const index = $(".faq--item").index(firstFaqItem[0]);
-    openFaqItem(firstFaqItem, index, true); // instant on retry too
+    const groups = getFaqGroups();
+    let opened = 0;
+    groups.forEach(function (parentEl) {
+      const hasOpenInGroup = $(parentEl).children(".faq--item.open").length > 0;
+      if (hasOpenInGroup) return;
+      const firstInGroup = $(parentEl).children(".faq--item").first();
+      if (firstInGroup.length) {
+        const index = $(".faq--item").index(firstInGroup[0]);
+        openFaqItem(firstInGroup, index, true);
+        opened++;
+      }
+    });
+    if (opened > 0) {
+      console.log("[FAQ] ensureFirstFaqOpen: opened first in", opened, "group(s) (retry)");
+    }
   }
   setTimeout(ensureFirstFaqOpen, 400);
   setTimeout(ensureFirstFaqOpen, 1000);
