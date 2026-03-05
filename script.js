@@ -486,9 +486,9 @@ function updateFeatureImages(activeIndex) {
   });
 }
 
-// Function to open a specific FAQ item
-function openFaqItem(faqItem, index) {
-  console.log("[FAQ] openFaqItem called", { index, faqItem: faqItem[0] });
+// Function to open a specific FAQ item (instant = true skips animation, for reliable open-on-load)
+function openFaqItem(faqItem, index, instant) {
+  console.log("[FAQ] openFaqItem called", { index, instant: !!instant, faqItem: faqItem[0] });
   const response = faqItem.find(".faq--response");
   if (!response.length) {
     console.warn("[FAQ] openFaqItem: no .faq--response found inside item", faqItem[0]);
@@ -499,23 +499,31 @@ function openFaqItem(faqItem, index) {
   $(".faq--item.open").each(function () {
     if (this === faqItem[0]) return;
     const otherResponse = $(this).find(".faq--response");
-    otherResponse.animate({ height: "0px" }, 500);
+    if (instant) {
+      otherResponse.css("height", "0");
+    } else {
+      otherResponse.animate({ height: "0px" }, 500);
+    }
     $(this).removeClass("open");
   });
 
-  // Open the selected accordion: measure content height (use scrollHeight if height is 0 before reflow)
-  response.css("height", "auto");
-  let autoHeight = response.height();
-  if (autoHeight === 0 && response[0]) {
-    autoHeight = response[0].scrollHeight;
-  }
-  console.log("[FAQ] openFaqItem height measurement", { autoHeight, scrollHeight: response[0]?.scrollHeight, responseEl: response[0] });
-  response.css("height", "0px");
-  response.animate({ height: autoHeight }, 500, () => {
+  if (instant) {
     response.css("height", "auto");
-  });
-
-  faqItem.addClass("open");
+    faqItem.addClass("open");
+  } else {
+    // Open with animation: measure content height (use scrollHeight if height is 0 before reflow)
+    response.css("height", "auto");
+    let autoHeight = response.height();
+    if (autoHeight === 0 && response[0]) {
+      autoHeight = response[0].scrollHeight;
+    }
+    console.log("[FAQ] openFaqItem height measurement", { autoHeight, scrollHeight: response[0]?.scrollHeight, responseEl: response[0] });
+    response.css("height", "0px");
+    response.animate({ height: autoHeight }, 500, () => {
+      response.css("height", "auto");
+    });
+    faqItem.addClass("open");
+  }
 
   // Update feature images
   updateFeatureImages(index);
@@ -538,13 +546,13 @@ $(document).ready(function () {
     console.log("[FAQ] openFirstFaq (after rAF): first visible item =", firstFaqItem.length, firstFaqItem[0] || "(none)");
     if (firstFaqItem.length) {
       const index = $(".faq--item").index(firstFaqItem[0]);
-      openFaqItem(firstFaqItem, index);
+      openFaqItem(firstFaqItem, index, true); // instant: no animation so state sticks on load
     } else {
       // Fallback: first in DOM (e.g. section not yet visible)
       const fallback = $(".faq--item").first();
       if (fallback.length) {
         console.log("[FAQ] openFirstFaq: no visible item, using first in DOM");
-        openFaqItem(fallback, 0);
+        openFaqItem(fallback, 0, true);
       } else {
         console.warn("[FAQ] openFirstFaq: no .faq--item elements");
       }
@@ -562,7 +570,7 @@ $(document).ready(function () {
     if (!firstFaqItem.length) return;
     console.log("[FAQ] ensureFirstFaqOpen: no open item, opening first visible (retry)");
     const index = $(".faq--item").index(firstFaqItem[0]);
-    openFaqItem(firstFaqItem, index);
+    openFaqItem(firstFaqItem, index, true); // instant on retry too
   }
   setTimeout(ensureFirstFaqOpen, 400);
   setTimeout(ensureFirstFaqOpen, 1000);
