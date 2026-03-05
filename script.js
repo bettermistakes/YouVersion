@@ -475,14 +475,14 @@ document
 
 // ------------------ accordion ------------------ //
 
-// Function to update feature images opacity
-function updateFeatureImages(activeIndex) {
+// Function to update feature images opacity (single index or array of indices for "first in each group")
+function updateFeatureImages(activeIndexOrIndices) {
+  const indices = Array.isArray(activeIndexOrIndices)
+    ? activeIndexOrIndices
+    : [activeIndexOrIndices];
+  const set = new Set(indices);
   $(".feature--img").each(function (index) {
-    if (index === activeIndex) {
-      $(this).css("opacity", "1");
-    } else {
-      $(this).css("opacity", "0");
-    }
+    $(this).css("opacity", set.has(index) ? "1" : "0");
   });
 }
 
@@ -549,14 +549,19 @@ $(document).ready(function () {
   // Open the first item in each group of siblings (each FAQ section)
   function openFirstInEachGroup() {
     const groups = getFaqGroups();
+    const firstItemIndices = [];
     console.log("[FAQ] openFirstInEachGroup: found", groups.length, "group(s)");
     groups.forEach(function (parentEl) {
       const firstInGroup = $(parentEl).children(".faq--item").first();
       if (firstInGroup.length) {
         const index = $(".faq--item").index(firstInGroup[0]);
+        firstItemIndices.push(index);
         openFaqItem(firstInGroup, index, true);
       }
     });
+    if (firstItemIndices.length) {
+      updateFeatureImages(firstItemIndices);
+    }
   }
 
   requestAnimationFrame(function () {
@@ -580,13 +585,21 @@ $(document).ready(function () {
     if (opened > 0) {
       console.log("[FAQ] ensureFirstFaqOpen: opened first in", opened, "group(s) (retry)");
     }
+    // Sync feature images to all currently open items
+    const openIndices = $(".faq--item.open")
+      .toArray()
+      .map(function (el) {
+        return $(".faq--item").index(el);
+      });
+    if (openIndices.length) {
+      updateFeatureImages(openIndices);
+    }
   }
   setTimeout(ensureFirstFaqOpen, 400);
   setTimeout(ensureFirstFaqOpen, 1000);
 
-  // Set initial opacity for feature images
+  // Initial feature images set after openFirstInEachGroup (no pre-set; avoid flash of wrong image)
   $(".feature--img").css("opacity", "0");
-  $(".feature--img").first().css("opacity", "1");
 
   $(".faq--item").on("click", function () {
     const faqItems = $(".faq--item");
