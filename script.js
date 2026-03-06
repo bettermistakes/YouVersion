@@ -71,12 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     trigger.classList.remove("is--active");
-    // Only remove navbar state when closing the dropdown that is actually open
+    // Only clear state when closing the dropdown that is actually open
     if (dropdown === currentOpen) {
       const navbar = dropdown.closest(".navbar");
       if (navbar) navbar.classList.remove("is--dropdown-active");
+      currentOpen = null;
     }
-    currentOpen = null;
   };
 
   // Get all dropdown containers instead of just triggers
