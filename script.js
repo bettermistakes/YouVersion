@@ -42,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     trigger.classList.add("is--active");
+    const navbar = dropdown.closest(".navbar");
+    if (navbar) navbar.classList.add("is--dropdown-active");
     currentOpen = dropdown;
   };
 
@@ -69,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     trigger.classList.remove("is--active");
+    const navbar = dropdown.closest(".navbar");
+    if (navbar) navbar.classList.remove("is--dropdown-active");
     currentOpen = null;
   };
 
