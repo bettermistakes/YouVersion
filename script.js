@@ -71,8 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     trigger.classList.remove("is--active");
-    const navbar = dropdown.closest(".navbar");
-    if (navbar) navbar.classList.remove("is--dropdown-active");
+    // Only remove navbar state when closing the dropdown that is actually open
+    if (dropdown === currentOpen) {
+      const navbar = dropdown.closest(".navbar");
+      if (navbar) navbar.classList.remove("is--dropdown-active");
+    }
     currentOpen = null;
   };
 
